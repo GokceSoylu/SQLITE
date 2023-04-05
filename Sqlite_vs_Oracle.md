@@ -168,7 +168,8 @@ TO_DATE(string_date, format)
 
 ```
 
-NULL ile mücadele. ilk olarak. NVL(değiken adı, nul bulduğumuzda yerine koyacaımız şey)
+NULL ile mücadele. ilk olarak. NVL(değiken adı, nul bulduğumuzda yerine koyacaımız şey) hocam burada değişken adıyla yerine yazacağımız 
+şetyin tipinin aynı olması onemli. haliyel :)): mesela NVL(int_degisken, char_type) yaparsak hata aşırız
 NVL2(değişken adı, eğer null değilse dönecek değer, eğer null ise dönecek değer)
 bu mücadeel değil. NULLIF() ikin argüman alır eğer eşitlerse  null döndürür değillerse ilk argumanı döndürür
 COALESCE(par1,par2....parn) verilen paremetreleri tek tek gezer null olmayan ilk ifadeyi döndürür
