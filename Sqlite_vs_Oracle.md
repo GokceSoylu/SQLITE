@@ -329,3 +329,50 @@ ona bağlı tüm rowlar çıkatılır.
             CONNECT BY PRIOR last_name='putin'
             AND last_name != 'soylu';
 ```
+## Equijoin
+hocam NATURAL, USING, ON(if use = ) equijoin türleridir. bunları yazmadan direkt where ilede join yapılabilir. 
+sayrıca bu yazım sayesinde birden fazla tablodan birden sorgu yapabiliriz
+önce neyi alacağımızı sonra nereden alacağımızı en sonra danasıl alacağımızı yazarız
+```sql
+            SELECT table1.column, table2.column 
+            from table1, table2
+            WHERE table1.column = table2.column;
+```
+gerçek bir örnek
+```sql
+            SELECT employee.last_name, departments.depaerment_id
+            from employee, departments
+            WHERE employee.department_d = departments.department_id;
+```
+aliese her iki tabloda aynı column yoksa kısa ad dahi yazmana gerek yoktur. ayrıca filtrelemek içinde and kullanabiliriz.
+mesala burada istediğimiz bilgileri sadece 80 id nuber lı depaertman için yazdırıcaz.
+
+```sql 
+            SELECT last_name, e.job_id, job_title
+            from employees e, jobs j
+            WHERE e.job_id = j.job_id
+            AND department_id = 80;
+```
+Birde hocam böyle from kısmında kısa ad belirtiysen ister öncesş ister sonrası tablonunn kendi adının  yazarsan hata alırsın. 
+yanı from kısmında kısa ad belirtiyorsan her zaman onu kullanmak zorundasın.
+
+## Cartesian Product 
+eğer ki where kullanmazsan nasıl birleştireciğini bielemz ve ona göre yapayım buna göre mi yapayım derken kartezyen çarpar :))
+```sql
+            SELECT last_name, job_id
+            from employees e, jobs j;
+```
+nur topu gibi cross join oldu.
+
+
+## üç tablo birleştirme
+şimdi üç tabloyu sadece where ve and kullanarak birleştirelim.
+```sql
+            SELECT last_name, city
+            from employees e, departments d, locations l
+            WHERE e.department_id = d.department_id
+            AND d.location_id, l.location_id;
+```
+## Nonequijoin 
+
+buna da iki tür girer bir ON jpin nin between ile kullanılanı = kullanılmayanı varya o birde outer joins (left, right full)
