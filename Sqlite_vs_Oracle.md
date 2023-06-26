@@ -375,4 +375,18 @@ nur topu gibi cross join oldu.
 ```
 ## Nonequijoin 
 
-buna da iki tür girer bir ON jpin nin between ile kullanılanı = kullanılmayanı varya o birde outer joins (left, right full)
+buna da iki tür girer bir ON join nin between ile kullanılanı = kullanılmayanı varya o birde outer joins (left, right) full olmaz :))
+hadi yazımına da bakalım
+bu left outer join oluyor :))
+```sql 
+            SELECT e.last_name, d.department_id, d.department_name
+            from employee e, departments d
+            WHERE e.department_id = d.department_id(+)
+```
+bu da right outer join
+```sql 
+            SELECT e.last_name, d.department_id, d.department_name
+            from employee e, departments d
+            WHERE e.department_id(+) = d.department_id
+```
+bu sol sağ ters unutmayalım. 
