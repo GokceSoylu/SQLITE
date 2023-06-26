@@ -273,4 +273,59 @@ ERD de biliyorsun kendisiyle bağlantı kuran oluyor. for example an employee ca
 ```
 ## Hierarchial query
 
-hocam tabloda dikine bağlantılar kurmanı sağlar.
+hocam tabloda dikine bağlantılar kurmanı sağlar. mesala tabloda senin patronnun hemen bir üstünde yazılı oluyorsa.
+```sql
+            SELECT employee_id, last_name, job_id, manager_id from employees START WITH employee_id = 100
+            CONNECT BY PRIOR employee_id = manager_id;
+```
+hatta soy isme bağlı bir yazı da yazdırabiliirz. bu hierarchial sorgunun kendine özel keyword leri var. 
+select LEVEL dediğinde sıralamış oluyor daha doğrusu sırasını başına yazmış oluyor. bu biizm tablolarımızda olması gereken birattribute değil. 
+hierarchial sorgunun kendi özelliği :))
+prior önceki hangi değişkenle bağlantı kuracak bunu belirtiyor.
+start wirth adı üstünde ne ile başlayacağını hangı row dan başlayacağını belirtir.
+connect by prior hangi iki değişknei bir öncekiyle bağlaycak. mesala burda kendi, manager_id si bir öncekinin employee_id si oöur. 
+yanş yukarıdaji employee_id bu saturdaki manger_id olur. 
+
+```sql
+            SELECT LEVEL, last_name || ' reporst to ' || 
+            PRIOR last_name
+            AS "Walk Top Down" from employees 
+            START WITH last_name = 'King'
+            CONNECT BY PRIOR employee_id = manager_id;
+```
+
+output:
+1 Kings reports to 
+2 Kochar reports to King
+3 Whalen report to Kochar
+
+sırayı tersten yazdırmak içinse prior yazdığımız yeri değiştiririz
+```sql
+            SELECT LPAD(last_name LENGTH(last_name)+(level*2)-2,'_'), AS org_chart
+            from employees
+            START WITH last_name = 'Grant'
+            CONNECT BY employee_id = PRIOR manager_id;
+```
+anladın mı hocam connect  by prior yazmak yerine ikinci değişkenin başına yazdık böyle olunca tersten sıralıyor.
+LPAD a gelince hierarchial a özek değil. left padding soldan doldurma demek. verilen uzunluğa gelinene kadar kelimenin soluna 
+eğer verilmişse verilen karakterle verilmemişse boşlukla doldurulur.
+
+hocam birde bu bağlantı olayında bir satırı hariç tutmak istiyorsak where kullanabiliriz. eğer ki where kullanırsak sadece bu istemediğimiz row yazılmaz ama bbu durumda 
+bu çıkarttığımız rowun altındakş ona bağlı olan row çıkartılan row un üstüne bağlı gibi gözükür. 
+diğer bir yöntemde connect by kısmından sonra and ekleyip istemediğimiz satırı belirtmektir bu durumda ise istemediğimiz row ile birlikte onun altında
+ona bağlı tüm rowlar çıkatılır.
+
+```sql
+            SELECT last_name
+            from employees 
+            where last_name != 'Higgings'
+            START WITH last_name = 'Kochar'
+            CONNECT BY PRIOR employee_id = manager_id;
+```
+```sql
+            SELECT last_name 
+            from employee
+            START WITH last_name 'sabbah'
+            CONNECT BY PRIOR last_name='putin'
+            AND last_name != 'soylu';
+```
