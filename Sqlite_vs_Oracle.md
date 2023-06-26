@@ -206,3 +206,71 @@ yazılıyor o kdr
             AS "Departments" from employees;
             
 ```
+## Join
+
+## Natural Join
+kendisi orta isimli column ile birleştirir. Evet yani ortak column olamlı ve bunların veri tiplaride aynı olmallı.
+
+```sql
+            Select first_name, job_id from employees NATURAL JOİN jobs;
+```
+
+## Cross Join 
+birleştirdiğinde tüm olası kombinasyonları yapar. 
+8 row table CROSS JOIN 20 row table; = 160 row table olur :))
+
+birde JOIN ile birlikte kullanılan kelimeler var. onların da özellikleirne bakalım
+
+## Join Using 
+hocam bu using varya kral bir şey. Şimdi natural joinde aynı isimde fakat farklı veri tipli column birleştirilirken hata veriliyor. ytani bu adamlar aynı isimde fakat farklı veri tipinde işte tam bu nokta da using işimize yarıyor. using ile kullanammız gereken calomns belirtiyoruz. :))
+
+```sql
+            SELECT first_name, employee_id, department_id, department from employees JOIN departments USING (department_id) WHERE last_name = 'Higgins';
+```
+
+## Join On
+ya isimler bile farklıyse. Hop ON clause yanımızda. bu arada where ile de kullanılabilir.
+
+```sql
+            SELECT last_name, job_title from employees e JOIN jobs j ON (e.job_id = j.job_id);
+```
+hocam gördüğün gibi isimler aynı olmasa dahi bu eşitlemeyi yapman gerekir. çünkü öyle tipi böyle istiyo :))
+
+where ile de kullanalım
+```sql
+            SELECT last_name, job_title from eployees e JOIN jobs j ON (e.job_id = j.job_id) WHERE last_name LIKE 'H%';
+```
+
+
+```sql
+            SELECT last_name, salary, grade_level, lowest_salary, highest_salary from employees JOIN job_grades ON (salary BETWEEN lowest_salary AND highest_salary);
+```
+
+NOT: istersen birden fazla using kullanarak yada using v eon kullanarak üç ve daha fazla tabloyu birleştirebilirsin.
+
+```sql
+            SELECT last_name, department_name AS "Department", city from employees JOIN departments USING (department_id) JOIN location USING (location_id);
+```
+## left- right full outer join
+
+```sql
+            SELECT e.last_name, d.department_id, d.department_name from employees e LEFT OUTER JOIN departments d ON (e.department_id = d.department_id);
+```
+
+
+## mini özet:
+sadece **join** olduğunda tabloyu farklı isimlerle tekrar oluşturursun. **inner join** de istedğin columler ın sadece ortak satırlarını görürsün. 
+**left-right join** de ortak satılar ve endexli olunan tablonun tüm satırları alınır join yapıldığında karşı tabloda karşılığı olmamasına 
+rağmen bu satırlar yazaılır. **full join** ise tüm hepsini alır. ortaklığa dahil olsun olmasın her iki tablonunda tüm satırları yazılır. 
+hatta dublicate sorunu yaşanmadan :))
+**cross join** de ise olası tüm kombinasyonlar yazılır. 
+
+## relationship with itself
+
+ERD de biliyorsun kendisiyle bağlantı kuran oluyor. for example an employee can be a manager as well. that's the example code
+```sql
+            SELECT worker.last_name || 'works for' || manager.last_name AS "works for" from employees woker JOIN employees manager ON (worker.manager_id = manager.employee_id);
+```
+## Hierarchial query
+
+hocam tabloda dikine bağlantılar kurmanı sağlar.

@@ -57,3 +57,9 @@ kısaca insert into ile her zaman yeni satır oluşturulur ancak tüm değişkel
         VALUES('kemal',25);
 ```
 
+INSERT INTO n_table
+VALUES();
+
+
+INSERT INTO s_table
+VALUES();
