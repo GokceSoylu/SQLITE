@@ -390,3 +390,78 @@ bu da right outer join
             WHERE e.department_id(+) = d.department_id
 ```
 bu sol sağ ters unutmayalım. 
+
+## Group Functions
+öncelikle numeric olanlardan başlayalım **SUM**, **AVG**, **COUNT**, **MIN**, **MAX**, **VARIANCE** (varyans), **STDDEV** (standard sapma)
+-> sum toplamı count satır sayısını döndürür.
+hepsinin syntaxı aynı mantıkta
+```sql
+            SELECT MIN(salary) from employees;
+```
+
+onemli not grup fonksiyonlarını where 'in yanında kullamazsın. joinleri kullanıyorduk ama grup fonksiyonları olmaz
+where salary = avg(salary) gibi bir kodda hata alırsın BOM! birde grup fonksiyonşarı NULL değerini göz ardı eder!
+
+MIN, MAX ve COUNT her verei tipi için kullanılabilir. hani stringde str uzunluğına tarşhte en erken tarihe bakar fln
+
+SUM, AVG, STDDEV, VARIANCE tahmin edeceğin üzere sadece numeric veride çalışır
+
+**count adına notlar**  hocam count(*) da diyebiliriz mesela
+```sql
+            SELECT COUNT(*) from employees WHERE hire_date < '01-JAN-1996';
+```
+burada verilen tarihten önce işe giren kaç kişi oldjuğunu yazdırır bu satırların null değer içerip içermemesi önemli değildir.
+
+örneğin her meslek bir defa yazdırılacak şekilde meslek adı ve id sıne ulaşırız.
+**DISTINCT** dublicated satırlardan kurtarır her birininden bir defa olmasının sağlar
+```sql
+            SELECT DISTIMCT job_id, job_id from employee ;
+```
+aşşağıdaki kodda ise kaç farlı meslek türü olduğunun sayısına ulaşırız :))
+```sql
+            SELECT COUNT(DISTINCT job_id) 
+```
+
+**NVL** iki argüman alır ilki null ise ikiciyi say der. mesala siparişleir hesaplıyaz ama null olunca avg hesaba katmıhyor ama biz onun sıfır olarak kabul edilip hesaplanmasını istiyoruz.
+```sql
+            SELECT AVG(NVL(comission_pct ,0)) FROM employees;
+```
+
+## Group By 
+gruplandırm aişine yarar.
+```sql
+            SELECT MAX(salary), department_i from employees
+            GROUP BY department_id;
+```
+her departmanın max maaşını yazdırır. mesala burada birde selection ın yanına last_name yazdırmaya kalkışsaydık hata alırdık çünkü 
+department_id e göre gruplaması gerekiyor ama last_name özel ve gruplanamaz.
+
+**group by ve count** birlikte kullanımı 
+```sql
+            SELECT COUNT(country_name), region_id from counrties 
+            GROUP BY region_id;
+```
+işte her bölgede kaç tane ülke olduğunu yazdırır. biliyorsun ki count null değeri görmezden geleceği için hiç ülkeye 
+sahip olmayan bölgeler yazdırılmayacaktır. mesala bu kodda count(*) deseydikte aynı region_id değerine sahip ka.ç satur avr onu öğreniridk
+* group by ile where de kullanılabilr sıkıntı olmaz
+
+iç içe gruplar yapabilirz
+```sql
+            SELECT department_id, job_id, count(*)
+            from employees
+            GROUP BY department_id, job_id;
+```
+bu şekilde her departmanda kaç iş ve her iş te kaç çalışan  oldupunu görebileceğiz.
+
+* **HAVING** kullanımı
+having kullandığımız zaman çnce gruplamayı yapar sonra sadece şarta uyan grupları yazdırır.
+```sql
+            SELECT region_id, ROUND(AVG(population))
+            from countries 
+            GROUP BY region_id
+            HAVING MIN(population)>300000 ;
+```
+önce her ortalam populasyon sayılarına bölge bölge bulur sonra gruplardan içerisinde verilen sayıdan küçük popilasyon bulundurmayan gruplar yazdırılır.
+dikkat edelim maksat ort ın bu sayıyı sağlaması değil yapılna grubun her hangi bir üyesinin uyumsuzluk çıkarmaması sayıya uyması :))
+
+kodda order by kullanma durumda da her zaman sona yazılır.
