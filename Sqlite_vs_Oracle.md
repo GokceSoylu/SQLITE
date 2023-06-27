@@ -476,3 +476,26 @@ group by ile kullanılır. birden fazla gruplama bir nevi iç içe gruplama sağ
 ```
 sonuç nasıl olur dersek hocam rollup a iiki argüman veririsen üç çıktı alırsın yanı çıktı column sayısı argüma sayısı+1 olur :)
 eğer burada rollup kullanmasaydık her department_id için değerleri gözlemlerdik fakat her job_id için olmazdı. rollup kullandığımız sonuç satırı daha fazla olur
+
+## Cube
+tüm mümkün kombinasyonları yazdırır.
+shirt  gucci
+shirt  lee
+shirt  null
+jeen   gucci
+jeen   lee
+jeen   null
+null   null
+null   gucci
+null   leee
+
+gibi sonuç olırız.
+
+## grouping set
+```sql
+            SELECT separtment_id, job_id, manager_id, SUM(salary)
+            from employees
+            GROUP BY GROUPING SETS
+            ((job_id, manager_id), (department_id, job_id),(department_id, manager_id));
+```
+hazır grupları belirmiş olduk
