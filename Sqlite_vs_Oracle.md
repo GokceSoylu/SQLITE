@@ -465,3 +465,14 @@ having kullandığımız zaman çnce gruplamayı yapar sonra sadece şarta uyan 
 dikkat edelim maksat ort ın bu sayıyı sağlaması değil yapılna grubun her hangi bir üyesinin uyumsuzluk çıkarmaması sayıya uyması :))
 
 kodda order by kullanma durumda da her zaman sona yazılır.
+
+## Rollup 
+group by ile kullanılır. birden fazla gruplama bir nevi iç içe gruplama sağlar. gruplamayı verilen listede sağdan sola doğru yapar
+```sql
+            SELECT departmentt_id, job_id, SUM(salary)
+            from employees
+            WHERE department_id < 50
+            GROUP BY ROLLUP department_id, job_id;
+```
+sonuç nasıl olur dersek hocam rollup a iiki argüman veririsen üç çıktı alırsın yanı çıktı column sayısı argüma sayısı+1 olur :)
+eğer burada rollup kullanmasaydık her department_id için değerleri gözlemlerdik fakat her job_id için olmazdı. rollup kullandığımız sonuç satırı daha fazla olur
