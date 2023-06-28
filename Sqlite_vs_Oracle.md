@@ -499,3 +499,52 @@ gibi sonuç olırız.
             ((job_id, manager_id), (department_id, job_id),(department_id, manager_id));
 ```
 hazır grupları belirmiş olduk
+
+## Union
+union işte iki select kullanarak yaptığımız bir çeşiy ilkel birleştirme türü. 
+hocam union full outer gibi sonuç veriir iki listenin tüm elemanlarını tekrar bulunmaksızın listeler.
+A=1,2,3,4,5 B=3,4,5,6,7,8 olsun
+
+```sql
+            SELECT a_numbers from A 
+            UNION
+            SELECT b_numbers from B;
+```
+the result: 1,2,3,4,5,6,7,8
+
+ancak **UNION ALL** dersek tekrar eden elemanları çıkarmadan ne var ne yok listeler.
+
+```sql
+            SELECT a_numbers from A
+            UNION ALL
+            SELECT b_numbers from B;
+```
+the result: 1,2,3,4,5,,3,4,5,6,7,8 
+ 
+## Intersect
+hocam yazımı unıon gibi tekrar yazmıyıcam. Ortak elemanları yazdırır. yukarıdaki örnek için 4,5 yazdırırdı
+
+## Mİnus
+bu bi tuhaf. yalnızca a demek. sadece ilk selecte bukunank-ları yazdırı ortakları hiç yazdırmaz
+```sql
+            SELECT a_number from A
+            MINUS
+            SELECT b_number from B;
+```
+the result 1,2,3 
+
+şimdi hocam iki tablo düşünelim bir kırmızxı biri beyaz 😂 şaka şaka
+iki tablo  employees ve job_history bu iki tabloda employee_id, job_id ortak. işe başlama işte buunma tarihleir konusunda da farklı kayıtlar yapılmış. şöyle
+employee hire date olarak kaydetmiş. job_history tablosu ise start_date ve end_date olarak iki column da kaydetmiş ama bu yüzdden veri farklılığı oluşuyor.
+
+bunlar ortak column sayılmıyor ve  bu yğzdenbirleştirm yaptığımızda bular dışarıd akalıyor. bizim union falan ortak column ikle ilgilenir.
+ozamn biz veri tipi aynı olacak şekilde TO_CHAR(), TO_DATE, TO_, TO_NUMBER fonksiyonlarından uygun olanı seçip kullanırız. yani eksik kolonu oluştururve null ile doldururuz hadi orneğe bakalım :)
+```sql
+            SELECT hire_date, employee_id, job_id from employees
+            UNION 
+            SELECT TO_DATE(NULL), employee_id, job_id from job_history;
+```
+bu şekilde eksik kolonuda match haline geetiriyorsun. 
+
+hmm hocam bunlarla birlikte order by da kullanılailr ama select gibi değil sadece bir defa kullanılabilir. ve her zaman en sona yazılır
+
