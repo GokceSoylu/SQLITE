@@ -571,10 +571,10 @@ hocam birden fazla subquery de kullanabiliriz ama nasıl yapabiliriz.
 ```sql
             SELECT last_name, job_id, salary, department_id from employees
             WHERE job_id = 
-            (SELECT job_id from emplooyes where employee_id = 41)
-            AND department_id = 
-            (SELECT department_id from departments WHERE department_name = 'Marketing')
-            ORDER BY job_id;
+                (SELECT job_id from emplooyes where employee_id = 41)
+                AND department_id = 
+                (SELECT department_id from departments WHERE department_name = 'Marketing')
+                ORDER BY job_id;
 ```
 hocam örnek gibi örnek geliyor
 which departments have a lowest salary that is greater than the lowest salary in department 50?
@@ -610,9 +610,9 @@ mesala burada **ANY** yazsaydı da herhangi biri demek olurdu.
             SELECT last_name, hire_date, department_id
             from employees
             WHERE EXTRACT(YEAR FROM hire_date) < ANY
-            (SELECT EXTRACT(YEAR FROM hire_date)
-            from employees
-            WHERE department_id = 90);
+                (SELECT EXTRACT(YEAR FROM hire_date)
+                from employees
+                WHERE department_id = 90);
 ```
 burada inner query den elde ettiin yılların herhangi birinden küçük olsa yeter
 
@@ -623,10 +623,10 @@ bir tanesinden bile küçük olmasa olmaz
             SELECT depatment_id, menager_id, department_id
             from employees
             WHERE (depatment_id, menager_id) IN
-            (SELECT department_id, menager_id
-            from employees
-            WHERE employee_id IN (10,20))
-            AND employee_id NOT IN (10,20);
+                (SELECT department_id, menager_id
+                from employees
+                WHERE employee_id IN (10,20))
+                AND employee_id NOT IN (10,20);
 ```
 anladın mı inceyi id sı 10, 20 olmadığı halde department_id ve manager_id si aynı olanı bulcaz :))
 ve tabiki inner query de birden fazla column kullandık olay buydu ;))
@@ -643,8 +643,21 @@ bu zamana kadarkilerde önce iç sorgu çalışır sonra dışa geçerdi şimdi 
             SELECT o.first_name, o.last_name, o.employee_id
             from employees o
             WHERE o.salary > 
-            (SELECT AVG(e.salary)
-            from employees e
-            WHERE e.department_id = o.department_id); 
+                (SELECT AVG(e.salary)
+                from employees e
+                WHERE e.department_id = o.department_id); 
 ```
 anladık mı hocam inceyi son where deki kısma bakalım :))
+
+## Exisit / Not Exist
+```sql
+            SELECT first_name, last_name AS "Not A Manager"
+            from employees e
+            WHERE NOT EXİSTS 
+                (SELECT *
+                from employees e2
+                WHERE e.manager_id = e2.employee_id);
+```
+anlatmaya gerek yok görüyorsunuz. burada subquery manager olanları dödürüyor. not exist ile bunlardan olmayanları aloyoruz böylece 
+manager olmayanları yazdırıyoruz :))
+ee bu bizim not exists aynı not in e benziyor. Evet çok benziyorlar tek bir farları var eğer null dönerse not in patlar. null olma durumda not exists i kullanalım :)
