@@ -548,3 +548,91 @@ bu şekilde eksik kolonuda match haline geetiriyorsun.
 
 hmm hocam bunlarla birlikte order by da kullanılailr ama select gibi değil sadece bir defa kullanılabilir. ve her zaman en sona yazılır
 
+## Subquery
+hocam kral bir konu geliyor inner query diğer adıyla subquery
+kuralları
+* kendine ait order by ı olamaz
+* olursa bir tane ve ortka oreder by olur o da her zamn ki gibi sona yazılır.
+* parantez içine yazılır.
+* normal select ve iç select farklı table lardan faydalaanbilir
+
+soru: employees adlı tablomuzda soyadı ercan olan çalışandan sonra işe girenleir yazdırmka istiyoruz.
+peki ya mr.ercan ne zaman işe girdi. gelsin inner/sun query
+
+```sql
+            SELECT first_name, last_name, hire_date from emplooyes
+            WHERE hire_date > 
+                        (SELECT hire_date 
+                        from emplyees
+                        WHERE last_name='Ercan');
+```
+hocam birden fazla subquery de kullanabiliriz ama nasıl yapabiliriz.
+
+```sql
+            SELECT last_name, job_id, salary, department_id from employees
+            WHERE job_id = 
+            (SELECT job_id from emplooyes where employee_id = 41)
+            AND department_id = 
+            (SELECT department_id from departments WHERE department_name = 'Marketing')
+            ORDER BY job_id;
+```
+hocam örnek gibi örnek geliyor
+which departments have a lowest salary that is greater than the lowest salary in department 50?
+```sql
+            SELECT department_id, MIN(salary) from employees
+            GROUP BY department_id
+            HAVING MIN(SALARY) > 
+                (SELECT MIN(SALARY) 
+                from employees
+                where department_id = 50);
+```
+su subquery i bşr adım içe yazmak benim adetim değil olması gereekn :)
+
+devam edelim şimdi subquery yazdığımızda bazen bu içteki select te birden fazla değer döner ama biz WHERE department_id = gibi
+iafade kullandığımızdan birden fala değer dönmesi durumunda bir = çok gibi bir durum oluşuyor ve hata alırız.
+
+bunun için IN, ANY, ON ifadeleri kullanıır
+bu arada in, any ve on ile not da kullanılabilir
+**IN**
+```sql
+            SELECT  first_name, last_name, employee_id 
+            from employees
+            WHERE EXTRACT(YEAR FROM hire_date) IN
+                (SELECT EXTRACT(YEAR FROM hire_date) 
+                from employees 
+                WHERE department_id = 90);
+```
+burada department_id sii 90 olan kişilerin giriş yıllarından birisiyle aynı yıl olan çalışanlar seçildi. yani yine birden fazla değer döndü ama in sayesinde 
+bu değerlerin içndeyese eğer kabul et dedi :))
+
+mesala burada **ANY** yazsaydı da herhangi biri demek olurdu.
+```sql
+            SELECT last_name, hire_date, department_id
+            from employees
+            WHERE EXTRACT(YEAR FROM hire_date) < ANY
+            (SELECT EXTRACT(YEAR FROM hire_date)
+            from employees
+            WHERE department_id = 90);
+```
+burada inner query den elde ettiin yılların herhangi birinden küçük olsa yeter
+
+**ALL** ise daha sert. Dönen değerlerin hepsini sağlıyacak mesala yukarıdaki örnekte all yazsaydı inner queryden gelen tüm tarihlerden küçük olmalıydı
+bir tanesinden bile küçük olmasa olmaz
+**multiple column subquery** diye bir şey var. birden fazla column kullanmasına denir. hadi örneğe bakalım :)
+```sql
+            SELECT depatment_id, menager_id, department_id
+            from employees
+            WHERE (depatment_id, menager_id) IN
+            (SELECT department_id, menager_id
+            from employees
+            WHERE employee_id IN (10,20))
+            AND employee_id NOT IN (10,20);
+```
+anladın mı inceyi id sı 10, 20 olmadığı halde department_id ve manager_id si aynı olanı bulcaz :))
+ve tabiki inner query de birden fazla column kullandık olay buydu ;))
+
+son not :)
+hocam şimdi subquery yazarken = kullanırsan neticede sadece tek satır döndürmesini bekliyorsun demektir. buna **single row subquery** denir
+eğer ki IN, ON , ANY kullanırsan birden fazla row gelme ihtimalini göze aldın demektir bunada **multiple row subquery** denilir
+
+zaten soy isim gibi tek row döndürmesini beklediğn yerlerde de nolur nolmaz çoklu row a göre yazman daha iyiolur unutmayalım soy isim benzerliği diye bir şey var:)
