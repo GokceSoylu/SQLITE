@@ -636,3 +636,15 @@ hocam şimdi subquery yazarken = kullanırsan neticede sadece tek satır döndü
 eğer ki IN, ON , ANY kullanırsan birden fazla row gelme ihtimalini göze aldın demektir bunada **multiple row subquery** denilir
 
 zaten soy isim gibi tek row döndürmesini beklediğn yerlerde de nolur nolmaz çoklu row a göre yazman daha iyiolur unutmayalım soy isim benzerliği diye bir şey var:)
+
+## Correlated Subquery
+bu zamana kadarkilerde önce iç sorgu çalışır sonra dışa geçerdi şimdi ise iç ve dış sorgu entegre çalışacak
+```sql
+            SELECT o.first_name, o.last_name, o.employee_id
+            from employees o
+            WHERE o.salary > 
+            (SELECT AVG(e.salary)
+            from employees e
+            WHERE e.department_id = o.department_id); 
+```
+anladık mı hocam inceyi son where deki kısma bakalım :))
