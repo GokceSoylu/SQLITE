@@ -415,7 +415,7 @@ burada verilen tarihten önce işe giren kaç kişi oldjuğunu yazdırır bu sat
 örneğin her meslek bir defa yazdırılacak şekilde meslek adı ve id sıne ulaşırız.
 **DISTINCT** dublicated satırlardan kurtarır her birininden bir defa olmasının sağlar
 ```sql
-            SELECT DISTIMCT job_id, job_id from employee ;
+            SELECT DISTINCT job_id, job_id from employee ;
 ```
 aşşağıdaki kodda ise kaç farlı meslek türü olduğunun sayısına ulaşırız :))
 ```sql
@@ -661,3 +661,21 @@ anladık mı hocam inceyi son where deki kısma bakalım :))
 anlatmaya gerek yok görüyorsunuz. burada subquery manager olanları dödürüyor. not exist ile bunlardan olmayanları aloyoruz böylece 
 manager olmayanları yazdırıyoruz :))
 ee bu bizim not exists aynı not in e benziyor. Evet çok benziyorlar tek bir farları var eğer null dönerse not in patlar. null olma durumda not exists i kullanalım :)
+
+**with**
+ilginç şeyler dönüyor  birde with clause diye bir şey var. fonksiyon yazmaay benziyor isim verip yapacağı işlemi üste
+yazıyorsun sonra yeri geldiğine sadece adını belirtiyorn :))
+
+```sql
+            WITH  managers AS
+                (SELECT DISTINCT magerer_id
+                from employees
+                WHERE manager_id IS NOT NULL)
+            
+            SELECT first_name, last_name AS "NOT Manager"
+            from employees 
+            WHERE employee_id NOT IN
+                (SELECT * 
+                from managers);
+```
+nasıl ama kral muk değil mi:)
